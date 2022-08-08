@@ -1,0 +1,36 @@
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  color: #1976d2;
+}
+
+.Form {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: stretch;
+  align-content: space-between;
+  justify-items: center;
+  justify-content: space-around;
+}
+
+.FileRow
+{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  display:  grid  ;
+ 
+  width:  100vw  ;
+  overflow-x:  scroll  ;
+  scroll-Behavior:  smooth  ;
+  scroll-snap-align:  center  ;
+ 
+  grid-template-rows: 1fr ;
+  
+}
+
+.FileRow::-webkit-scrollbar {
+  display: none;
+}
