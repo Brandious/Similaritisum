@@ -21,7 +21,7 @@ export default function MultilineTextFields() {
     console.log('ratio');
     e.preventDefault();
     
-    const compareData =  await axios.get(`http://localhost:3000/file1/${workingFiles[0]}/word/${value1}`);
+    const compareData =  await axios.get(`http://localhost:8080/file1/${workingFiles[0]}/word/${value1}`);
 
     setWorkingFiles([]);
   
@@ -31,7 +31,7 @@ export default function MultilineTextFields() {
   const handleCompare = async(e) => {
     e.preventDefault();
     
-    const compareData =  await axios.get(`http://localhost:3000/file1/${workingFiles[0]}/file2/${workingFiles[1]}`);
+    const compareData =  await axios.get(`http://localhost:8080/file1/${workingFiles[0]}/file2/${workingFiles[1]}`);
 
     setWorkingFiles([]);
 

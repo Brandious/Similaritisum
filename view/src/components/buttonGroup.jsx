@@ -35,7 +35,7 @@ export default function VariantButtonGroup() {
     setLoading(true);
     let formData = new FormData();
     formData.append("file", e.target.files[0]);
-    const upload = await axios.post('http://localhost:3000/upload', formData, {
+    const upload = await axios.post('http://localhost:8080/upload', formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       }
@@ -43,7 +43,7 @@ export default function VariantButtonGroup() {
 
     console.log(upload);
 
-    const getData = await axios.get('http://localhost:3000/files');
+    const getData = await axios.get('http://localhost:8080/files');
     setFiles(getData);
     setLoading(false);
 
@@ -53,7 +53,7 @@ export default function VariantButtonGroup() {
   const handleGetFiles = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const getData = await axios.get('http://localhost:3000/files');
+    const getData = await axios.get('http://localhost:8080/files');
     setFiles(getData);
     setLoading(false);
 

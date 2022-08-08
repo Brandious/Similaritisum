@@ -17,7 +17,7 @@ const FileProvider = ({ children }) => {
         
         async function getFiles () {
           
-            const data =  await axios.get('http://localhost:3000/files');
+            const data =  await axios.get('http://localhost:8080/files');
             setFiles(data);
             
           }
