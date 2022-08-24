@@ -48,8 +48,20 @@ Under the hood,operative part that is alghorithm are **JaroWrinker** for text co
 
 JaroWrinker and hashMapCounting are implemented inside of React Application while LevenshteinDistance is not.
 
+---
 
+## UPDATED, REFACTORED BRANCH 
+# **updateWithNotes**
 
+So based on your suggestions I refactored and implemented some of your propositions into this task. NodeCLI application now has a switch implemented that corresponds to diffrent actions that user wants to try out. Server has proper express routing setup and error handling. ReadFile has been moved to FileHandler file but not class. There is more refactoring to be done there with possibility of creating my own npm package for file handling use. Edge casses in all parts of the application as well as the try...catch blocks have been written in, also React application now utilizes .env file for setting up the communication with node.js which is not in the current repository as well as instantiating AXIOS with the same variable 
+
+    REACT_APP_NODE_API=http://localhost:8080 
+    
+which improves readabilty and gives some options as call timeout and error response.
+
+Alghorithms weren't touched at all...
+
+Looking forward to hearing from you...
 
 
 
