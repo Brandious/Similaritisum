@@ -2,6 +2,9 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from 'axios';
 
 const FileContext = createContext();
+const instance = axios.create({baseURL: process.env.REACT_APP_NODE_API, timeout: 30000});
+
+  
 
 
 const FileProvider = ({ children }) => {
@@ -10,41 +13,42 @@ const FileProvider = ({ children }) => {
     const [loading ,setLoading] = useState(true);
     const [workingFiles, setWorkingFiles] = useState([]);
     const [compare, setCompare] = React.useState(true);
-
+    const [errors, setErrors] = React.useState('');
+    const [result, setResult] = React.useState();
 
     useEffect(() => {
        
         
         async function getFiles () {
-          
-            const data =  await axios.get('http://localhost:8080/files');
-            setFiles(data);
+           try{
+            const res =  await instance.get('/files');
             
+             setFiles(res);
+           }
+           catch(err)
+           {
+             setErrors(err);
+           }
           }
        
      
       getFiles();
       setLoading(false);
+      
+     return () => setFiles([]);
 
-     return () => [];
-    },[setFiles, setLoading]);
+    },[ setFiles, setLoading]);
     
 
     return (
-      <FileContext.Provider value={{ ...files, workingFiles, loading,compare, setFiles, setLoading, setWorkingFiles, setCompare }}>
+      <FileContext.Provider value={{ ...files, workingFiles,errors,result, loading, compare, instance, setFiles, setLoading, setWorkingFiles, setCompare, setErrors, setResult }}>
         {children}
       </FileContext.Provider>
     );
   };
 
 
-  const withFiles = (Child) => (props) => (
-    <FileContext.Consumer>
-      {(context) => <Child {...props} {...context} />}
-      {/* Another option is:  {context => <Child {...props} context={context}/>}*/}
-    </FileContext.Consumer>
-  );
 
 
 
-export  {FileContext, FileProvider, withFiles};
+export  { FileContext, FileProvider };

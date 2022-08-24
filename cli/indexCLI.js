@@ -1,34 +1,85 @@
-const { FileHandler } = require('../services/FileHandlerClass');
-
+const { ReadFile } = require('../services/FileHandlerClass');
 const { LevenshteinDistance, WordRatioCaller, JaroCaller } = require('../services/FileComparator');
 
-const ReadFile = async (...paths) => {
-    const newFiles = paths.map(el => new FileHandler(el, 1234567));
-    const results = newFiles.map(async (el) => {
-        await el.read();
-        return el;
-    });
-    
+const Compare = async (...files) => {
 
-    return results;
+
+
+
+    if (files.length === 0) throw ('Files not found...');
+    if (files.length < 2) throw ('Missing one file...');
+
+    try {
+        const res = await ReadFile(...files);
+
+
+        const jaroWrinkerNumber = JaroCaller((res[0]).streams, (res[1]).streams)
+
+
+        return [jaroWrinkerNumber];
+    }
+    catch (err) {
+        throw err;
+    }
 }
 
-const ReadMultiple = async () => {
-    
+const Ratio = async (file, word) => {
 
-    const files = process.argv.slice(2);
-    if(files.length === 0) throw ('Files not found...');
 
-    const res = await ReadFile(...files);
-  
-    const lev = LevenshteinDistance((await res[0]).streams, ['Pekle']);
-    const wordRatio = WordRatioCaller((await res[0]).streams, (await res[1]).streams);
-    const jaroWrinkerNumber = JaroCaller((await res[0]).streams, (await res[1]).streams)
-  
+    if (file.length === 0) throw ('File not found...');
 
-    return [lev, wordRatio, jaroWrinkerNumber];
+    try {
+        const res = await ReadFile(file);
+     
+        const wordRatio = WordRatioCaller((res[0]).streams, [word]);
+
+
+
+        return [wordRatio];
+    }
+    catch (err) {
+        throw err;
+    }
+
+
+
 }
 
-const main = async () => {try{console.log(await ReadMultiple())} catch(err){console.log(err)}};
+const Change = (text1, text2) => {
+
+    if(!text1 || !text2) throw ('Pogresan Unos...');
+
+    const lev = LevenshteinDistance([text1], [text2]);
+
+
+
+    return [lev];
+}
+
+
+const main = async () => {
+    try {
+        const type = process.argv.slice(2)[0];
+
+        switch (type) {
+            case 'compare':
+                console.log(await Compare(...process.argv.slice(3)));
+                break;
+            case 'ratio':
+                console.log(await Ratio(process.argv.slice(3)[0], process.argv.slice(3)[1]));
+                break;
+            case 'change':
+                console.log(Change(process.argv.slice(3)[0], process.argv.slice(3)[1]));
+                break;
+            default:
+                console.log('This should be Help Text');
+                break;
+
+        }
+    }
+    catch (err) {
+        console.error(err)
+    }
+};
 
 main();

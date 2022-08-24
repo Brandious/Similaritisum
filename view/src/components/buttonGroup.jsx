@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import { FileContext } from '../context/fileContext';
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -21,43 +21,62 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function VariantButtonGroup() {
 
 
-  const { data, compare, loading, workingFiles, setFiles, setLoading, setWorkingFiles, setCompare } = React.useContext(FileContext);
-  const [file, setFile] = React.useState('');
+  const { errors, data, compare, loading, instance, setFiles, setWorkingFiles, setCompare, setResult } = React.useContext(FileContext);
+   
+  const [currLoading, setCurrLoading] = React.useState(loading);
+  const [currErrors, setCurrErrors] = React.useState(errors);
 
   const handleTypeChange = () => {
-
+    setCurrErrors('');
+    setCurrLoading(false);
     setCompare(!compare);
+    setResult('');
   }
 
+
   const handleUploadFile = async (e) => {
-    e.preventDefault();
-    setFile(e.target.files[0]);
-    setLoading(true);
-    let formData = new FormData();
-    formData.append("file", e.target.files[0]);
-    const upload = await axios.post('http://localhost:8080/upload', formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      }
-    });
+    try {
+      e.preventDefault();
 
-    console.log(upload);
+      setCurrLoading(true);
+      let formData = new FormData();
+      formData.append("file", e.target.files[0]);
+      const upload = await instance.post('/upload', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      });
 
-    const getData = await axios.get('http://localhost:8080/files');
-    setFiles(getData);
-    setLoading(false);
 
+      const getData = await instance.get('/files');
+      setFiles(getData);
+      if (upload.data.status === true) setCurrLoading(false);
+    }
+    catch (err) {
+
+      setCurrErrors(err.response.data.error);
+      setCurrLoading(false);
+      // console.log(err.response.data.error);
+    }
 
   }
 
   const handleGetFiles = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const getData = await axios.get('http://localhost:8080/files');
-    setFiles(getData);
-    setLoading(false);
+    try {
+      e.preventDefault();
+      setCurrLoading(true);
+      setCurrErrors('');
+      const getData = await instance.get('/files');
+      setFiles(getData);
+      setCurrLoading(false);
+    } catch (err) {
 
+      setCurrErrors(err.response.data.error);
+      setCurrLoading(false);
+      // console.log(err.response.data.error);
+    }
   }
+
 
   return (
     <Box
@@ -73,15 +92,17 @@ export default function VariantButtonGroup() {
       }}
     >
       <div>
-        <Button variant="contained" component="label"  style={{width: '7rem'}} onChange={handleUploadFile}>
+
+        <Button variant="contained" component="label" style={{ width: '7rem' }} onChange={handleUploadFile} >
           Upload
           <input hidden accept="*" multiple type="file" />
         </Button>
 
-        <Button variant="contained" color="success" style={{width: '7rem'}} onClick={handleGetFiles}>Refresh</Button>
+
+        <Button variant="contained" color="success" style={{ width: '7rem' }} onClick={handleGetFiles}>Refresh</Button>
       </div>
 
-      {loading ? <p>Loading...</p> :
+      {currErrors ? <h4>{currErrors}</h4> : currLoading ?  <CircularProgress /> :
         <div>
           <Stack
             direction="row"

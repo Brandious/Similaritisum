@@ -7,6 +7,7 @@ import { FileProvider } from './context/fileContext';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <FileProvider>
     <App />

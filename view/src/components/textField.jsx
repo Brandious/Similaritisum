@@ -2,40 +2,56 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import { FileContext } from '../context/fileContext';
-import axios from 'axios';
 
 export default function MultilineTextFields() {
- 
-  const [value1, setValue1] = React.useState('Nothing Compared Yet');
-  const [value, setValue] = React.useState('Nothing Compared Yet');
 
-  const { data,compare, loading, workingFiles, setFiles, setLoading, setWorkingFiles, setCompare} = React.useContext(FileContext);
+  const [word, setWord] = React.useState('');
 
- const handleChange = (e) => {
-     setValue1(e.target.value);
-     console.log(value1);
- }
 
-  const handleRatio = async(e) => {
-    console.log('ratio');
-    e.preventDefault();
-    
-    const compareData =  await axios.get(`http://localhost:8080/file1/${workingFiles[0]}/word/${value1}`);
+  const { errors, loading,result, compare, workingFiles, instance, setErrors, setWorkingFiles, setLoading, setResult } = React.useContext(FileContext);
 
-    setWorkingFiles([]);
-  
-    setValue(compareData.data?.numbers);
+  const [currLoading, setCurrLoading] = React.useState(loading);
+  const [currErrors, setCurrErrors] = React.useState(errors);
+
+
+  const handleChange = (e) => {
+    setWord(e.target.value);
+
   }
 
-  const handleCompare = async(e) => {
-    e.preventDefault();
-    
-    const compareData =  await axios.get(`http://localhost:8080/file1/${workingFiles[0]}/file2/${workingFiles[1]}`);
+  const handleRatio = async (e) => {
+    try {
+      e.preventDefault();
+      setCurrErrors('');
+      const compareData = await instance.get(`/compareOne?filename1=${workingFiles[0]}&word=${word}`);
+      setResult(compareData.data?.numbers);
+      setWorkingFiles([]);
+    } catch (err) {
 
-    setWorkingFiles([]);
+      setCurrErrors(err.response.data.error);
+      setCurrLoading(false);
+      // console.log(err.response.data.error);
+    }
 
-    setValue(compareData.data?.numbers);
+  }
+
+  const handleCompare = async (e) => {
+    try {
+      e.preventDefault();
+      setCurrLoading(true);
+      setCurrErrors('');
+      const compareData = await instance.get(`/compare?filename1=${workingFiles[0]}&filename2=${workingFiles[1]}`);
+      setResult(compareData.data?.numbers);
+      setWorkingFiles([]);
+      if (compareData.data.status === true) setCurrLoading(false);
+    }
+    catch (err) {
+      setCurrErrors(err.response.data.error);
+      setCurrLoading(false);
+      // console.log(err.response.data.error);
+    }
   }
 
 
@@ -53,18 +69,18 @@ export default function MultilineTextFields() {
       autoComplete="off"
     >
       {!compare && <div>
-      <TextField
+        <TextField
           id="outlined-textarea"
           label="Unesite text"
           placeholder="Text"
           multiline
           onChange={handleChange}
         />
-      </div> }
-      
-      <Button variant="contained" color="secondary" style={{width: '7rem'}} onClick={compare ? handleCompare : handleRatio}>{compare ? 'Compare' : 'Ratio'}</Button>
+      </div>}
 
-      <h3>{value}</h3>
+      <Button variant="contained" color="secondary" style={{ width: '7rem' }} onClick={compare ? handleCompare : handleRatio}>{compare ? 'Compare' : 'Ratio'}</Button>
+
+      {currErrors ? <h3>{currErrors}</h3> : currLoading ? <CircularProgress /> : <h3>{result}</h3>}
     </Box>
   );
 }
