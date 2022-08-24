@@ -10,7 +10,7 @@ export default function MultilineTextFields() {
   const [word, setWord] = React.useState('');
 
 
-  const { errors, loading,result, compare, workingFiles, instance,  setWorkingFiles,  setResult } = React.useContext(FileContext);
+  const { errors, loading,result, compare, workingFiles, instance,  setWorkingFiles,  setResult, setLoading } = React.useContext(FileContext);
 
   const [currLoading, setCurrLoading] = React.useState(loading);
   const [currErrors, setCurrErrors] = React.useState(errors);
@@ -45,7 +45,7 @@ export default function MultilineTextFields() {
       const compareData = await instance.get(`/compare?filename1=${workingFiles[0]}&filename2=${workingFiles[1]}`);
       setResult(compareData.data?.numbers);
       setWorkingFiles([]);
-      if (compareData.data.status === true) setCurrLoading(false);
+      if (compareData.data.status === true) {setCurrLoading(false); setLoading(false)}
     }
     catch (err) {
       setCurrErrors(err.response.data.error);

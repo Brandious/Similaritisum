@@ -21,7 +21,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function VariantButtonGroup() {
 
 
-  const { errors, data, compare, loading, instance, setFiles, setWorkingFiles, setCompare, setResult } = React.useContext(FileContext);
+  const { errors, data, compare, loading, instance, setFiles, setWorkingFiles, setCompare, setResult, setLoading } = React.useContext(FileContext);
    
   const [currLoading, setCurrLoading] = React.useState(loading);
   const [currErrors, setCurrErrors] = React.useState(errors);
@@ -50,7 +50,7 @@ export default function VariantButtonGroup() {
 
       const getData = await instance.get('/files');
       setFiles(getData);
-      if (upload.data.status === true) setCurrLoading(false);
+      if (upload.data.status === true) {setCurrLoading(false); setLoading(false)}
     }
     catch (err) {
 
@@ -69,6 +69,7 @@ export default function VariantButtonGroup() {
       const getData = await instance.get('/files');
       setFiles(getData);
       setCurrLoading(false);
+      setLoading(false);
     } catch (err) {
 
       setCurrErrors(err.response.data.error);
