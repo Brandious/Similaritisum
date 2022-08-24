@@ -10,7 +10,7 @@ export default function MultilineTextFields() {
   const [word, setWord] = React.useState('');
 
 
-  const { errors, loading,result, compare, workingFiles, instance, setErrors, setWorkingFiles, setLoading, setResult } = React.useContext(FileContext);
+  const { errors, loading,result, compare, workingFiles, instance,  setWorkingFiles,  setResult } = React.useContext(FileContext);
 
   const [currLoading, setCurrLoading] = React.useState(loading);
   const [currErrors, setCurrErrors] = React.useState(errors);
